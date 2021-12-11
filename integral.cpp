@@ -14,7 +14,7 @@ using namespace std;
 //integral function
 double function(double x)
 {
-    return x*x*x;
+    return (1 / ( 1 + ( x * x)));
 }
 
 void MidpointRule(double a, double b, int n)
@@ -35,7 +35,6 @@ void MidpointRule(double a, double b, int n)
 }
 
 //Trapezoidal rule
-//typedef double(*function)(double);
 //TODO if n == 0
 void TrapezoidalRule(double a, double b, int n)
 {
@@ -56,6 +55,33 @@ void TrapezoidalRule(double a, double b, int n)
   cout << "Trapezoidal rule result: " << sum << "\n";
 }
 
+//Simpson's Rule
+void SimpsonsRule(double a, double b, int n)
+{
+    double sum = 0.0;
+    double k;
+    int i;
+    double step = (b - a) / n;
+
+    sum = function(a) + function(b);
+    for(i = 1; i < n; i++)
+    {
+        k = a + i * step;
+        if(i % 2 == 0)
+        {
+            sum += (2 * function(k));
+        }
+        else
+        {
+            sum += (4 * function(k));
+        }
+    }
+
+    sum *= step / 3;
+
+    cout << "Simpsons rule result: " << sum << "\n";
+}
+
 int main()
 {
     double beginInterval;
@@ -73,12 +99,11 @@ int main()
 
     MidpointRule(beginInterval, endInterval, n);
     TrapezoidalRule(beginInterval, endInterval, n);
+    SimpsonsRule(beginInterval, endInterval, n);
     return 0;
 }
 
 /*
- //метод Симпсон
- 
 int main()
 {
     int a, b, n, k, m = 1;
