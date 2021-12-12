@@ -82,11 +82,43 @@ void SimpsonsRule(double a, double b, int n)
     cout << "Simpsons rule result: " << sum << "\n";
 }
 
+//Bode formula
+void BodeFormula(double a, double b, double eps)
+{   
+    double sum = 0.0;
+    double temp_sum;
+    double step; //-- h
+    double z;
+    int n = 1;
+    int i;
+ 
+    n = 1;
+    do
+    {
+        temp_sum = sum; 
+        sum = 0.0; 
+        n *= 2;
+        step = (b - a) / n;
+        z = step / 4;
+ 
+        for (i = 1; i <= n; ++i)
+            sum += 7 * function(a + i * step - 4 * z) + 32 * function(a + i * step - 3 * z) + 12 * function(a + i * step - 2 * z) +
+                32 * function(a + i * step - z) + 7 * function(a + i * step);
+ 
+        sum *= 2 * z / 45;
+ 
+    } while (fabs(temp_sum - sum) < eps);
+ 
+    cout << "Bode formula result: " << sum << "\n";
+}
+
 int main()
 {
     double beginInterval;
-    double endInterval; 
-    int n; 
+    double endInterval;
+    double epsilon = 0.001;
+    int n;
+
 
     cout << "Beginning of interval: ";
     cin >> beginInterval;
@@ -100,84 +132,84 @@ int main()
     MidpointRule(beginInterval, endInterval, n);
     TrapezoidalRule(beginInterval, endInterval, n);
     SimpsonsRule(beginInterval, endInterval, n);
+    BodeFormula(beginInterval, endInterval, epsilon);
     return 0;
 }
 
-
 /*
 
-//метод Гаусса
-
+//Gauss-Legendre
 double X[100],Y[100],dY[100],DY[100],d2Y[100],D2Y[100],pog1[100],pog2[100],h,I;
 int i,a,b,k,r,v,m;
 double f(double x)
 {
-double t;
-t=sqrt(x)-pow(cos(x),2);
-return(t);
+    double t;
+    t=sqrt(x)-pow(cos(x),2);
+    return(t);
 }
+
 double Gauss2(double A,double B,double M)
 {
-double h,x12,x1,x2,s=0,integral;
-int i;
-h=(B-A)/M;
-x12=A+h/2;
-x1=x12-(h/2)*0.5773502692;
-x2=x12+(h/2)* 0.5773502692;
-for(i=1;i<=m;i++)
-{
-s+=f(x1)+  f(x2);
-x12=x12+h;
-x1=x12-(h/2)* 0.5773502692;
-x2=x12+(h/2)* 0.5773502692;
-}
-integral=(h/2)*s;
-return (integral);
+    double h,x12,x1,x2,s=0,integral;
+    int i;
+    h=(B-A)/M;
+    x12=A+h/2;
+    x1=x12-(h/2)*0.5773502692;
+    x2=x12+(h/2)* 0.5773502692;
+    for(i=1;i<=m;i++)
+    {
+        s+=f(x1)+  f(x2);
+        x12=x12+h;
+        x1=x12-(h/2)* 0.5773502692;
+        x2=x12+(h/2)* 0.5773502692;
+    }
+    integral=(h/2)*s;
+    return (integral);
 }
 void main(void)
 {
-cout<<"a=";
-cin>>a;
-cout<<"b=";
-cin>>b;
-cout<<"Vibirete shag:\n"<<"1 h=0.2\n"<<"2 h=0.1\n"<<"3 h=0.05\n";
-cin>>r;
-switch(r)
-{
-case 1:
-h=0.2;
-break;
-case 2:
-h=0.1;
-break;
-case 3:
-h=0.05;
-break;
-default:
-cout<<"Vibrano ne dopustimoe zna4enie";
-}
-cout<<"Viberete m:\n1 m=10\n2 m=20\n3 m=40\n";
-cin>>v;
-switch(v)
-{
-case 1:
-m=10;
-break;
-case 2:
-m=20;
-break;
-case 3:
-m=40;
-break;
-default:
-cout<<"Vibrano ne dopustimoe zna4enie";
-}
-k=(b-a)/h;
-for(i=1;i<=k+1;i++)
-{
-X[i]=a+(i-1)*h;
-Y[i]=f(X[i]);
-}
+    cout<<"a=";
+    cin>>a;
+    cout<<"b=";
+    cin>>b;
+    cout<<"Vibirete shag:\n"<<"1 h=0.2\n"<<"2 h=0.1\n"<<"3 h=0.05\n";
+    cin>>r;
+    switch(r)
+    {
+        case 1:
+            h=0.2;
+            break;
+        case 2:
+            h=0.1;
+            break;
+        case 3:
+            h=0.05;
+            break;
+        default:
+            cout<<"Vibrano ne dopustimoe zna4enie";
+    }
+    cout<<"Viberete m:\n1 m=10\n2 m=20\n3 m=40\n";
+    cin>>v;
+    switch(v)
+    {
+        case 1:
+            m=10;
+            break;
+        case 2:
+            m=20;
+            break;
+        case 3:
+            m=40;
+            break;
+        default:
+            cout<<"Vibrano ne dopustimoe zna4enie";
+    }
+    k=(b-a)/h;
+    for(i=1;i<=k+1;i++)
+    {
+        X[i]=a+(i-1)*h;
+        Y[i]=f(X[i]);
+    }
 //первая производная
 dY[1]=-(3*Y[1]-4*Y[2]+Y[3])/(2*h);
 dY[k+1]=(Y[k-1]-4*Y[k]+3*Y[k+1])/(2*h);
@@ -197,32 +229,5 @@ I=Gauss2(a,b,m);
 cout<<endl<<"Integral="<<I<<endl;
 }
 
-//формула Боде
-using namespace std;
- 
-double Bode(double a, double b, double eps)
-{
-    double h, s, s1, z;
-    int i, n;
- 
-    s = 0; n = 1;
-    do
-    {
-        s1 = s; s = 0; n *= 2; h = (b - a) / n; z = h / 4;
- 
-        for (i = 1; i <= n; ++n)
-            s += 7 * pow(a + i * h - 4 * z, 2) + 32 * pow(a + i * h - 3 * z, 2) + 12 * pow(A + i * h - 2 * z, 2) +
-                32 * pow(a + i * h - z, 2) + 7 * pow(a + i * h, 2);
- 
-        s *= 2 * z / 45;
- 
-    } while (fabs(s1 - s) >= eps);
- 
-    return s;
-}
- 
-int main()
-{
-    cout << Bode(1, 2, 0.001) << endl;
-}
+
 */
